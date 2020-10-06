@@ -1,7 +1,6 @@
 import { Fridge } from "../entities/Fridge";
 import { MyContext } from "src/types";
-import { Resolver, Query, Ctx, Arg, Int, Mutation } from "type-graphql";
-
+import { Resolver, Query, Ctx, Arg, Mutation } from "type-graphql";
 @Resolver()
 export class FridgeResolver {
   @Query(() => [Fridge])
@@ -11,7 +10,7 @@ export class FridgeResolver {
 
   @Query(() => Fridge, {nullable: true})
   fridge(
-    @Arg('id', () => Int) id: number,
+    @Arg('id') id: number,
     @Ctx() { em }: MyContext
     ): Promise<Fridge | null> {
     return em.findOne(Fridge, { id });

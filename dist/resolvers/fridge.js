@@ -72,7 +72,7 @@ __decorate([
 ], FridgeResolver.prototype, "fridges", null);
 __decorate([
     type_graphql_1.Query(() => Fridge_1.Fridge, { nullable: true }),
-    __param(0, type_graphql_1.Arg('id', () => type_graphql_1.Int)),
+    __param(0, type_graphql_1.Arg('id')),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
