@@ -57,7 +57,55 @@ message: 'password must be at least 7 character'
       username: options.username,
       password: hashedPassword,
     });
-    await em.persistAndFlush(user);
-    return {user};
+    try {
+      await em.persistAndFlush(user);
+    } catch (err) {
+      //|| err.detail.includes("already exists")) {
+      // duplicate username error
+      if (err.code === "23505") {
+        return {
+          errors: [
+            {
+              field: "username",
+              message: "username already taken",
+            },
+          ],
+        };
+      }
+    }
+    return { user };
+  }
+
+  @Mutation(() => UserResponse)
+  async login(
+    @Arg("options") options: UsernamePasswordInput,
+    @Ctx() { em }: MyContext
+  ): Promise<UserResponse> {
+    const user = await em.findOne(User, { username: options.username });
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "username",
+            message: "that username doesn't exist",
+          },
+        ],
+      };
+    }
+    const valid = await argon2.verify(user.password, options.password);
+    if (!valid) {
+      return {
+        errors: [
+          {
+            field: "password",
+            message: "incorrect password",
+          },
+        ],
+      };
+    }
+
+    return {
+      user,
+    };
   }
 }

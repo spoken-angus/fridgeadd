@@ -91,8 +91,51 @@ let UserResolver = class UserResolver {
                 username: options.username,
                 password: hashedPassword,
             });
-            yield em.persistAndFlush(user);
+            try {
+                yield em.persistAndFlush(user);
+            }
+            catch (err) {
+                if (err.code === "23505") {
+                    return {
+                        errors: [
+                            {
+                                field: "username",
+                                message: "username already taken",
+                            },
+                        ],
+                    };
+                }
+            }
             return { user };
+        });
+    }
+    login(options, { em }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield em.findOne(User_1.User, { username: options.username });
+            if (!user) {
+                return {
+                    errors: [
+                        {
+                            field: "username",
+                            message: "that username doesn't exist",
+                        },
+                    ],
+                };
+            }
+            const valid = yield argon2_1.default.verify(user.password, options.password);
+            if (!valid) {
+                return {
+                    errors: [
+                        {
+                            field: "password",
+                            message: "incorrect password",
+                        },
+                    ],
+                };
+            }
+            return {
+                user,
+            };
         });
     }
 };
@@ -104,6 +147,14 @@ __decorate([
     __metadata("design:paramtypes", [UsernamePasswordInput, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "register", null);
+__decorate([
+    type_graphql_1.Mutation(() => UserResponse),
+    __param(0, type_graphql_1.Arg("options")),
+    __param(1, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [UsernamePasswordInput, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "login", null);
 UserResolver = __decorate([
     type_graphql_1.Resolver()
 ], UserResolver);
