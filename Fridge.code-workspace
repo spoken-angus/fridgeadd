@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "Fridge_app",
+			"path": "."
+		},
+		{
+			"name": "fridgeadd-web",
+			"path": "../fridgeadd-web"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}
