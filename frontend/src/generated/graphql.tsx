@@ -148,6 +148,17 @@ export type RegisterMutation = (
   ) }
 );
 
+export type FridgesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FridgesQuery = (
+  { __typename?: 'Query' }
+  & { fridges: Array<(
+    { __typename?: 'Fridge' }
+    & Pick<Fridge, 'id' | 'updatedAt' | 'createdAt' | 'title'>
+  )> }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -212,6 +223,20 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const FridgesDocument = gql`
+    query FRIDGES {
+  fridges {
+    id
+    updatedAt
+    createdAt
+    title
+  }
+}
+    `;
+
+export function useFridgesQuery(options: Omit<Urql.UseQueryArgs<FridgesQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<FridgesQuery>({ query: FridgesDocument, ...options });
 };
 export const MeDocument = gql`
     query Me {

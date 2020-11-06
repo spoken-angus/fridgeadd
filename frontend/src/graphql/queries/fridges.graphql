@@ -1,0 +1,8 @@
+query FRIDGES {
+  fridges {
+    id
+    updatedAt
+    createdAt
+    title
+  }
+}
