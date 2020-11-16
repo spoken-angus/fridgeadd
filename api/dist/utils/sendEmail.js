@@ -14,21 +14,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
+require("dotenv").config();
+const { EMAILPASS, EMAIL } = process.env;
+console.log("Email Pass:", EMAILPASS);
 function sendEmail(to, html) {
     return __awaiter(this, void 0, void 0, function* () {
         let transporter = nodemailer_1.default.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            secure: false,
+            service: "Gmail",
             auth: {
-                user: 'm55tpj7ltesck72b@ethereal.email',
-                pass: 'yddwdqBnMv994MnJPQ',
+                user: `${EMAIL}`,
+                pass: `${EMAILPASS}`,
             },
         });
         let info = yield transporter.sendMail({
-            from: '"Fred Foo 👻" <foo@example.com>',
+            from: "angusjelinek@gmail.com",
             to: to,
-            subject: "Hello ✔",
+            subject: "Change password",
             html,
         });
         console.log("Message sent: %s", info.messageId);

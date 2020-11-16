@@ -2,32 +2,37 @@ import "reflect-metadata";
 import { MikroORM } from "@mikro-orm/core";
 import { __prod__, COOKIE_NAME } from "./constants";
 import microConfig from "./mikro-orm.config";
-import express from 'express'
+import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
 import { FridgeResolver } from "./resolvers/fridge";
 import { UserResolver } from "./resolvers/user";
-import redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
-import cors from 'cors'
+import cors from "cors";
+
 const main = async () => {
+  const Redis = require("ioredis");
   const orm = await MikroORM.init(microConfig);
   await orm.getMigrator().up();
-  // const fridge = orm.em.create(Fridge, { title: "my first post" });
-  // await orm.em.persistAndFlush(fridge);
 
   const app = express();
 
   const RedisStore = connectRedis(session);
-  const redisClient = redis.createClient();
-  app.use(cors({origin: 'http://localhost:3000', credentials: true,}))
+  const redis = new Redis();
+
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
   app.use(
     session({
       name: COOKIE_NAME,
       store: new RedisStore({
-        client: redisClient,
+        client: redis,
         disableTouch: true,
       }),
       cookie: {
@@ -45,15 +50,18 @@ const main = async () => {
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [HelloResolver, FridgeResolver, UserResolver],
-      validate: false
+      validate: false,
     }),
-    context: ({ req, res }) => ({em: orm.em, req, res}),
+    context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
   });
 
-  apolloServer.applyMiddleware({ app, cors: false});
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,
+  });
 
   app.listen(4000, () => {
-    console.log('server started on localhost:4000')
+    console.log("server started on localhost:4000");
   });
 };
 
