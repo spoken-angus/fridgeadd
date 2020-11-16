@@ -26,7 +26,9 @@ const Fridge_1 = require("../entities/Fridge");
 const type_graphql_1 = require("type-graphql");
 let FridgeResolver = class FridgeResolver {
     fridges({ em }) {
-        return em.find(Fridge_1.Fridge, {});
+        return __awaiter(this, void 0, void 0, function* () {
+            return em.find(Fridge_1.Fridge, {});
+        });
     }
     fridge(id, { em }) {
         return em.findOne(Fridge_1.Fridge, { id });
@@ -44,7 +46,7 @@ let FridgeResolver = class FridgeResolver {
             if (!fridge) {
                 return null;
             }
-            if (typeof title !== 'undefined') {
+            if (typeof title !== "undefined") {
                 fridge.title = title;
                 yield em.persistAndFlush(fridge);
             }
@@ -72,7 +74,7 @@ __decorate([
 ], FridgeResolver.prototype, "fridges", null);
 __decorate([
     type_graphql_1.Query(() => Fridge_1.Fridge, { nullable: true }),
-    __param(0, type_graphql_1.Arg('id')),
+    __param(0, type_graphql_1.Arg("id")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
@@ -80,7 +82,7 @@ __decorate([
 ], FridgeResolver.prototype, "fridge", null);
 __decorate([
     type_graphql_1.Mutation(() => Fridge_1.Fridge),
-    __param(0, type_graphql_1.Arg('title')),
+    __param(0, type_graphql_1.Arg("title")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
@@ -88,8 +90,8 @@ __decorate([
 ], FridgeResolver.prototype, "createFridge", null);
 __decorate([
     type_graphql_1.Mutation(() => Fridge_1.Fridge, { nullable: true }),
-    __param(0, type_graphql_1.Arg('id')),
-    __param(1, type_graphql_1.Arg('title', () => String, { nullable: true })),
+    __param(0, type_graphql_1.Arg("id")),
+    __param(1, type_graphql_1.Arg("title", () => String, { nullable: true })),
     __param(2, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, String, Object]),
@@ -97,7 +99,7 @@ __decorate([
 ], FridgeResolver.prototype, "updateFridge", null);
 __decorate([
     type_graphql_1.Mutation(() => Fridge_1.Fridge, { nullable: true }),
-    __param(0, type_graphql_1.Arg('id')),
+    __param(0, type_graphql_1.Arg("id")),
     __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
