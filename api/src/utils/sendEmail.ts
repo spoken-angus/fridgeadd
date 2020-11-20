@@ -2,7 +2,6 @@ import nodemailer from "nodemailer";
 require("dotenv").config(); // ✅ Load .env file
 
 const { EMAILPASS, EMAIL } = process.env;
-console.log("Email Pass:", EMAILPASS);
 // async..await is not allowed in global scope, must use a wrapper
 export async function sendEmail(to: string, html: string) {
   // Generate test SMTP service account from ethereal.email

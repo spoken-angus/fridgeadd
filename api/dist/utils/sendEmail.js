@@ -16,7 +16,6 @@ exports.sendEmail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 require("dotenv").config();
 const { EMAILPASS, EMAIL } = process.env;
-console.log("Email Pass:", EMAILPASS);
 function sendEmail(to, html) {
     return __awaiter(this, void 0, void 0, function* () {
         let transporter = nodemailer_1.default.createTransport({
