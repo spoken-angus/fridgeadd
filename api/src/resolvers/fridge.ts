@@ -1,55 +1,38 @@
 import { Fridge } from "../entities/Fridge";
-import { MyContext } from "src/types";
-import { Resolver, Query, Ctx, Arg, Mutation } from "type-graphql";
+import { Resolver, Query, Arg, Mutation } from "type-graphql";
+
 @Resolver()
 export class FridgeResolver {
   @Query(() => [Fridge])
-  async fridges(@Ctx() { em }: MyContext): Promise<Fridge[]> {
-    return em.find(Fridge, {});
+  async fridges(): Promise<Fridge[]> {
+    return Fridge.find();
   }
 
   @Query(() => Fridge, { nullable: true })
-  fridge(
-    @Arg("id") id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<Fridge | null> {
-    return em.findOne(Fridge, { id });
+  fridge(@Arg("id") id: number): Promise<Fridge | undefined> {
+    return Fridge.findOne(id);
   }
   @Mutation(() => Fridge)
-  async createFridge(
-    @Arg("title") title: string,
-    @Ctx() { em }: MyContext
-  ): Promise<Fridge> {
-    const fridge = em.create(Fridge, { title });
-    await em.persistAndFlush(fridge);
-    return fridge;
+  async createFridge(@Arg("title") title: string): Promise<Fridge> {
+    return Fridge.create({ title }).save();
   }
   @Mutation(() => Fridge, { nullable: true })
   async updateFridge(
     @Arg("id") id: number,
-    @Arg("title", () => String, { nullable: true }) title: string,
-    @Ctx() { em }: MyContext
+    @Arg("title", () => String, { nullable: true }) title: string
   ): Promise<Fridge | null> {
-    const fridge = await em.findOne(Fridge, { id });
+    const fridge = await Fridge.findOne(id);
     if (!fridge) {
       return null;
     }
     if (typeof title !== "undefined") {
-      fridge.title = title;
-      await em.persistAndFlush(fridge);
+      await Fridge.update({ id }, { title });
     }
     return fridge;
   }
   @Mutation(() => Fridge, { nullable: true })
-  async deleteFridge(
-    @Arg("id") id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<boolean> {
-    try {
-      await em.nativeDelete(Fridge, { id });
-    } catch {
-      return false;
-    }
+  async deleteFridge(@Arg("id") id: number): Promise<boolean> {
+    await Fridge.delete(id);
     return true;
   }
 }
