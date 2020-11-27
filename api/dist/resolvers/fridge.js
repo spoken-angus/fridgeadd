@@ -25,6 +25,7 @@ exports.FridgeResolver = void 0;
 const Fridge_1 = require("../entities/Fridge");
 const type_graphql_1 = require("type-graphql");
 const isAuth_1 = require("../middleware/isAuth");
+const typeorm_1 = require("typeorm");
 let FridgeInput = class FridgeInput {
 };
 __decorate([
@@ -39,9 +40,18 @@ FridgeInput = __decorate([
     type_graphql_1.InputType()
 ], FridgeInput);
 let FridgeResolver = class FridgeResolver {
-    fridges() {
+    fridges(limit, cursor) {
         return __awaiter(this, void 0, void 0, function* () {
-            return Fridge_1.Fridge.find();
+            const realLimit = Math.min(50, limit);
+            const qb = typeorm_1.getConnection()
+                .getRepository(Fridge_1.Fridge)
+                .createQueryBuilder("p")
+                .orderBy('"createdAt"', "DESC")
+                .take(realLimit);
+            if (cursor) {
+                qb.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) });
+            }
+            return qb.getMany();
         });
     }
     fridge(id) {
@@ -73,8 +83,10 @@ let FridgeResolver = class FridgeResolver {
 };
 __decorate([
     type_graphql_1.Query(() => [Fridge_1.Fridge]),
+    __param(0, type_graphql_1.Arg("limit", () => type_graphql_1.Int)),
+    __param(1, type_graphql_1.Arg("cursor", () => String, { nullable: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], FridgeResolver.prototype, "fridges", null);
 __decorate([

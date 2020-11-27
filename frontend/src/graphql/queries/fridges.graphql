@@ -1,8 +1,8 @@
-query FRIDGES {
-  fridges {
+query Fridges($limit: Int!, $cursor: String) {
+  fridges(cursor: $cursor, limit: $limit) {
     id
-    updatedAt
     createdAt
+    updatedAt
     title
   }
 }

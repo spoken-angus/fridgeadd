@@ -4,8 +4,13 @@ import { useFridgesQuery } from "../generated/graphql";
 import { Layout } from "../components/Layout";
 import { Link } from "@chakra-ui/core";
 import NextLink from "next/link";
+
 const Index = () => {
-  const [{ data }] = useFridgesQuery();
+  const [{ data }] = useFridgesQuery({
+    variables: {
+      limit: 10,
+    },
+  });
   return (
     <Layout>
       <NextLink href="/create-post">

@@ -21,6 +21,12 @@ export type Query = {
 };
 
 
+export type QueryFridgesArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
 export type QueryFridgeArgs = {
   id: Scalars['Float'];
 };
@@ -211,14 +217,17 @@ export type RegisterMutation = (
   ) }
 );
 
-export type FridgesQueryVariables = Exact<{ [key: string]: never; }>;
+export type FridgesQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
 
 
 export type FridgesQuery = (
   { __typename?: 'Query' }
   & { fridges: Array<(
     { __typename?: 'Fridge' }
-    & Pick<Fridge, 'id' | 'updatedAt' | 'createdAt' | 'title'>
+    & Pick<Fridge, 'id' | 'createdAt' | 'updatedAt' | 'title'>
   )> }
 );
 
@@ -326,11 +335,11 @@ export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
 export const FridgesDocument = gql`
-    query FRIDGES {
-  fridges {
+    query Fridges($limit: Int!, $cursor: String) {
+  fridges(cursor: $cursor, limit: $limit) {
     id
-    updatedAt
     createdAt
+    updatedAt
     title
   }
 }

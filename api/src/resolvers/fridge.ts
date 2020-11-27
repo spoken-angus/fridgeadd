@@ -8,9 +8,11 @@ import {
   Field,
   Ctx,
   UseMiddleware,
+  Int,
 } from "type-graphql";
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
+import { getConnection } from "typeorm";
 
 @InputType()
 class FridgeInput {
@@ -23,8 +25,21 @@ class FridgeInput {
 @Resolver()
 export class FridgeResolver {
   @Query(() => [Fridge])
-  async fridges(): Promise<Fridge[]> {
-    return Fridge.find();
+  async fridges(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<Fridge[]> {
+    const realLimit = Math.min(50, limit);
+    const qb = getConnection()
+      .getRepository(Fridge)
+      .createQueryBuilder("p")
+      .orderBy('"createdAt"', "DESC")
+      .take(realLimit);
+    if (cursor) {
+      qb.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) });
+    }
+
+    return qb.getMany();
   }
 
   @Query(() => Fridge, { nullable: true })
