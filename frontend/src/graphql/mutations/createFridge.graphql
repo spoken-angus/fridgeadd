@@ -1,0 +1,11 @@
+mutation CreateFridge($input: FridgeInput!) {
+  createFridge(input: $input) {
+    id
+    createdAt
+    updatedAt
+    title
+    text
+    points
+    creatorId
+  }
+}
