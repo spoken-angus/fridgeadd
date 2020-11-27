@@ -1,5 +1,24 @@
 import { Fridge } from "../entities/Fridge";
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  InputType,
+  Field,
+  Ctx,
+  UseMiddleware,
+} from "type-graphql";
+import { MyContext } from "../types";
+import { isAuth } from "../middleware/isAuth";
+
+@InputType()
+class FridgeInput {
+  @Field()
+  title: string;
+  @Field()
+  text: string;
+}
 
 @Resolver()
 export class FridgeResolver {
@@ -13,8 +32,15 @@ export class FridgeResolver {
     return Fridge.findOne(id);
   }
   @Mutation(() => Fridge)
-  async createFridge(@Arg("title") title: string): Promise<Fridge> {
-    return Fridge.create({ title }).save();
+  @UseMiddleware(isAuth)
+  async createFridge(
+    @Arg("input") input: FridgeInput,
+    @Ctx() { req }: MyContext
+  ): Promise<Fridge> {
+    return Fridge.create({
+      ...input,
+      creatorId: req.session.userId,
+    }).save();
   }
   @Mutation(() => Fridge, { nullable: true })
   async updateFridge(

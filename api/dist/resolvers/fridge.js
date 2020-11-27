@@ -24,6 +24,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FridgeResolver = void 0;
 const Fridge_1 = require("../entities/Fridge");
 const type_graphql_1 = require("type-graphql");
+const isAuth_1 = require("../middleware/isAuth");
+let FridgeInput = class FridgeInput {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], FridgeInput.prototype, "title", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], FridgeInput.prototype, "text", void 0);
+FridgeInput = __decorate([
+    type_graphql_1.InputType()
+], FridgeInput);
 let FridgeResolver = class FridgeResolver {
     fridges() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,9 +47,9 @@ let FridgeResolver = class FridgeResolver {
     fridge(id) {
         return Fridge_1.Fridge.findOne(id);
     }
-    createFridge(title) {
+    createFridge(input, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            return Fridge_1.Fridge.create({ title }).save();
+            return Fridge_1.Fridge.create(Object.assign(Object.assign({}, input), { creatorId: req.session.userId })).save();
         });
     }
     updateFridge(id, title) {
@@ -72,9 +86,11 @@ __decorate([
 ], FridgeResolver.prototype, "fridge", null);
 __decorate([
     type_graphql_1.Mutation(() => Fridge_1.Fridge),
-    __param(0, type_graphql_1.Arg("title")),
+    type_graphql_1.UseMiddleware(isAuth_1.isAuth),
+    __param(0, type_graphql_1.Arg("input")),
+    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [FridgeInput, Object]),
     __metadata("design:returntype", Promise)
 ], FridgeResolver.prototype, "createFridge", null);
 __decorate([
