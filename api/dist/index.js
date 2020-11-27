@@ -26,6 +26,7 @@ const cors_1 = __importDefault(require("cors"));
 const typeorm_1 = require("typeorm");
 const Fridge_1 = require("./entities/Fridge");
 const User_1 = require("./entities/User");
+const path_1 = __importDefault(require("path"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const conn = yield typeorm_1.createConnection({
         type: "postgres",
@@ -34,8 +35,10 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         password: "postgres",
         logging: true,
         synchronize: true,
+        migrations: [path_1.default.join(__dirname, "./migrations/*")],
         entities: [Fridge_1.Fridge, User_1.User],
     });
+    yield conn.runMigrations();
     const Redis = require("ioredis");
     const app = express_1.default();
     const RedisStore = connect_redis_1.default(express_session_1.default);
