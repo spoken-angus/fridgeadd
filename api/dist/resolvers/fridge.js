@@ -40,6 +40,9 @@ FridgeInput = __decorate([
     type_graphql_1.InputType()
 ], FridgeInput);
 let FridgeResolver = class FridgeResolver {
+    textSnippet(root) {
+        return root.text.slice(0, 50);
+    }
     fridges(limit, cursor) {
         return __awaiter(this, void 0, void 0, function* () {
             const realLimit = Math.min(50, limit);
@@ -82,6 +85,13 @@ let FridgeResolver = class FridgeResolver {
     }
 };
 __decorate([
+    type_graphql_1.FieldResolver(() => String),
+    __param(0, type_graphql_1.Root()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Fridge_1.Fridge]),
+    __metadata("design:returntype", void 0)
+], FridgeResolver.prototype, "textSnippet", null);
+__decorate([
     type_graphql_1.Query(() => [Fridge_1.Fridge]),
     __param(0, type_graphql_1.Arg("limit", () => type_graphql_1.Int)),
     __param(1, type_graphql_1.Arg("cursor", () => String, { nullable: true })),
@@ -121,7 +131,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FridgeResolver.prototype, "deleteFridge", null);
 FridgeResolver = __decorate([
-    type_graphql_1.Resolver()
+    type_graphql_1.Resolver(Fridge_1.Fridge)
 ], FridgeResolver);
 exports.FridgeResolver = FridgeResolver;
 //# sourceMappingURL=fridge.js.map

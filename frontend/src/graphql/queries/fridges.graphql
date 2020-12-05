@@ -4,5 +4,6 @@ query Fridges($limit: Int!, $cursor: String) {
     createdAt
     updatedAt
     title
+    textSnippet
   }
 }

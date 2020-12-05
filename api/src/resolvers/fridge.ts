@@ -9,6 +9,8 @@ import {
   Ctx,
   UseMiddleware,
   Int,
+  FieldResolver,
+  Root,
 } from "type-graphql";
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
@@ -22,8 +24,13 @@ class FridgeInput {
   text: string;
 }
 
-@Resolver()
+@Resolver(Fridge)
 export class FridgeResolver {
+  @FieldResolver(() => String)
+  textSnippet(@Root() root: Fridge) {
+    return root.text.slice(0, 50);
+  }
+
   @Query(() => [Fridge])
   async fridges(
     @Arg("limit", () => Int) limit: number,

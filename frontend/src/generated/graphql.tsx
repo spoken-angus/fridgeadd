@@ -40,6 +40,7 @@ export type Fridge = {
   points: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  textSnippet: Scalars['String'];
 };
 
 export type User = {
@@ -227,7 +228,7 @@ export type FridgesQuery = (
   { __typename?: 'Query' }
   & { fridges: Array<(
     { __typename?: 'Fridge' }
-    & Pick<Fridge, 'id' | 'createdAt' | 'updatedAt' | 'title'>
+    & Pick<Fridge, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'textSnippet'>
   )> }
 );
 
@@ -341,6 +342,7 @@ export const FridgesDocument = gql`
     createdAt
     updatedAt
     title
+    textSnippet
   }
 }
     `;
