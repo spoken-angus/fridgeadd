@@ -30,7 +30,7 @@ const Index = () => {
         <div>loading...</div>
       ) : (
         <Stack spacing={8}>
-          {data!.fridges.map((p) => (
+          {data!.fridges.fridges.map((p) => (
             <Box key={p.id} p={5} shadow="md" borderWidth="1px">
               <Heading fontSize="xl">{p.title}</Heading>
               <Text mt={4}>{`${p.textSnippet}...`}</Text>
@@ -38,13 +38,15 @@ const Index = () => {
           ))}
         </Stack>
       )}
-      {data && (
+      {data && data.fridges.hasMore ? (
         <Flex>
           <Button
             onClick={() => {
               setVariables({
                 limit: variables.limit,
-                cursor: data.fridges[data.fridges.length - 1].createdAt,
+                cursor:
+                  data.fridges.fridges[data.fridges.fridges.length - 1]
+                    .createdAt,
               });
             }}
             isLoading={fetching}
@@ -54,7 +56,7 @@ const Index = () => {
             load more
           </Button>
         </Flex>
-      )}
+      ) : null}
     </Layout>
   );
 };

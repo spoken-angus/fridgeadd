@@ -15,7 +15,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
-  fridges: Array<Fridge>;
+  fridges: PaginatedFridges;
   fridge?: Maybe<Fridge>;
   me?: Maybe<User>;
 };
@@ -29,6 +29,12 @@ export type QueryFridgesArgs = {
 
 export type QueryFridgeArgs = {
   id: Scalars['Float'];
+};
+
+export type PaginatedFridges = {
+  __typename?: 'PaginatedFridges';
+  fridges: Array<Fridge>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type Fridge = {
@@ -226,10 +232,14 @@ export type FridgesQueryVariables = Exact<{
 
 export type FridgesQuery = (
   { __typename?: 'Query' }
-  & { fridges: Array<(
-    { __typename?: 'Fridge' }
-    & Pick<Fridge, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'textSnippet'>
-  )> }
+  & { fridges: (
+    { __typename?: 'PaginatedFridges' }
+    & Pick<PaginatedFridges, 'hasMore'>
+    & { fridges: Array<(
+      { __typename?: 'Fridge' }
+      & Pick<Fridge, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'textSnippet'>
+    )> }
+  ) }
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -338,11 +348,14 @@ export function useRegisterMutation() {
 export const FridgesDocument = gql`
     query Fridges($limit: Int!, $cursor: String) {
   fridges(cursor: $cursor, limit: $limit) {
-    id
-    createdAt
-    updatedAt
-    title
-    textSnippet
+    hasMore
+    fridges {
+      id
+      createdAt
+      updatedAt
+      title
+      textSnippet
+    }
   }
 }
     `;

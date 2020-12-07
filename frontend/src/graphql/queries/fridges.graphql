@@ -1,9 +1,12 @@
 query Fridges($limit: Int!, $cursor: String) {
   fridges(cursor: $cursor, limit: $limit) {
-    id
-    createdAt
-    updatedAt
-    title
-    textSnippet
+    hasMore
+    fridges {
+      id
+      createdAt
+      updatedAt
+      title
+      textSnippet
+    }
   }
 }
