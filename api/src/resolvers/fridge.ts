@@ -11,6 +11,7 @@ import {
   Int,
   FieldResolver,
   Root,
+  ObjectType,
 } from "type-graphql";
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
@@ -24,6 +25,13 @@ class FridgeInput {
   text: string;
 }
 
+@ObjectType()
+class PaginatedFridges {
+  @Field(() => [Fridge])
+  fridges: Fridge[];
+  @Field()
+  hasMore: boolean;
+}
 @Resolver(Fridge)
 export class FridgeResolver {
   @FieldResolver(() => String)
@@ -31,11 +39,11 @@ export class FridgeResolver {
     return root.text.slice(0, 50);
   }
 
-  @Query(() => [Fridge])
+  @Query(() => PaginatedFridges)
   async fridges(
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null
-  ): Promise<Fridge[]> {
+  ): Promise<PaginatedFridges> {
     const realLimit = Math.min(50, limit);
     const qb = getConnection()
       .getRepository(Fridge)
@@ -46,7 +54,12 @@ export class FridgeResolver {
       qb.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) });
     }
 
-    return qb.getMany();
+    const fridges = await qb.getMany();
+
+    return {
+      fridges: fridges.slice(0, realLimit - 1),
+      hasMore: fridges.length === realLimit,
+    };
   }
 
   @Query(() => Fridge, { nullable: true })

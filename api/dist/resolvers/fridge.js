@@ -39,6 +39,19 @@ __decorate([
 FridgeInput = __decorate([
     type_graphql_1.InputType()
 ], FridgeInput);
+let PaginatedFridges = class PaginatedFridges {
+};
+__decorate([
+    type_graphql_1.Field(() => [Fridge_1.Fridge]),
+    __metadata("design:type", Array)
+], PaginatedFridges.prototype, "fridges", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Boolean)
+], PaginatedFridges.prototype, "hasMore", void 0);
+PaginatedFridges = __decorate([
+    type_graphql_1.ObjectType()
+], PaginatedFridges);
 let FridgeResolver = class FridgeResolver {
     textSnippet(root) {
         return root.text.slice(0, 50);
@@ -54,7 +67,11 @@ let FridgeResolver = class FridgeResolver {
             if (cursor) {
                 qb.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) });
             }
-            return qb.getMany();
+            const fridges = yield qb.getMany();
+            return {
+                fridges: fridges.slice(0, realLimit - 1),
+                hasMore: fridges.length === realLimit,
+            };
         });
     }
     fridge(id) {
@@ -92,7 +109,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], FridgeResolver.prototype, "textSnippet", null);
 __decorate([
-    type_graphql_1.Query(() => [Fridge_1.Fridge]),
+    type_graphql_1.Query(() => PaginatedFridges),
     __param(0, type_graphql_1.Arg("limit", () => type_graphql_1.Int)),
     __param(1, type_graphql_1.Arg("cursor", () => String, { nullable: true })),
     __metadata("design:type", Function),
